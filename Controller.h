@@ -26,18 +26,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SFPasswordAssistantInspectorController.h"
 
-@interface Controller : NSObject {
-	SFPasswordAssistantInspectorController *pwAsst;
-	NSWindow *window;
-	NSSecureTextField *secureTextField;
-}
-
-- (id) init;
+@interface Controller : NSObject <NSApplicationDelegate>
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 
-- (IBAction) showPasswordAssistantPanel:(id)sender;
+- (IBAction)showPasswordAssistantPanel:(id)sender;
 
 @end

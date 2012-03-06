@@ -26,33 +26,41 @@
 //
 
 #import "Controller.h"
+#import "SFPasswordAssistantInspectorController.h"
 
-@implementation Controller
-
-- (id) init {
-	if (self = [super init]) {
-		pwAsst = [[SFPasswordAssistantInspectorController alloc] init];
-		window = [[NSWindow alloc] init];
-		secureTextField = [[NSSecureTextField alloc] init];
-	}
-	return self;
+@implementation Controller {
+    SFPasswordAssistantInspectorController *pwAsst;
+    NSMenu *menu;
+    NSStatusItem *statusItem;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	pwAsst->_baseWindow		= window;
-	pwAsst->_newPassword	= secureTextField;
-
-	[window center];
-	[self showPasswordAssistantPanel:self];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {    
+    // Init statusItem:
+    statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+    [statusItem setTitle:@"PA"];
+    [statusItem setToolTip:@"PA"];
+    [statusItem setHighlightMode:YES];
+    [statusItem setTarget:self];
+    [statusItem setAction:@selector(showPasswordAssistantPanel:)];
 }
 
-- (IBAction) showPasswordAssistantPanel:(id)sender {
-	[pwAsst showPasswordAssistantPanel:self];
-	[pwAsst->_passwordAssistantPanel makeKeyAndOrderFront:self];
-}
--(BOOL) applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)app {
-    return YES;
-}
+- (IBAction)showPasswordAssistantPanel:(id)sender {
+    if (pwAsst) {
+        [pwAsst closePasswordAssistantPanel];
+    }
+    
+    pwAsst = [[SFPasswordAssistantInspectorController alloc] init];
+    [pwAsst showPasswordAssistantPanel:sender];
 
+    if (sender && [sender isKindOfClass:[NSView class]]) {
+        NSPanel* panel = [pwAsst panel];
+        NSRect frame = [panel convertRectFromScreen:[[sender window] convertRectToScreen:[sender frame]]];
+        NSPoint topLeft = frame.origin;
+        topLeft.y += frame.size.height;
+        [panel setFrameTopLeftPoint:topLeft];
+    }
+    
+    [[pwAsst panel] makeKeyAndOrderFront:sender];
+}
 
 @end
