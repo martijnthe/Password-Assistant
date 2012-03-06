@@ -2,38 +2,39 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SFPasswordAsstView : NSView
-{
-}
-
-@end
+@class NSTextField, NSWindow, SFPasswordAsstView;
 
 @interface SFPasswordAssistantInspectorController : NSObject
 {
-	@public
-    IBOutlet NSWindow *_baseWindow;
+    NSWindow *_baseWindow;
     NSWindow *_passwordAssistantPanel;
     SFPasswordAsstView *_passwordAssistantView;
-    IBOutlet NSTextField *_originalPassword;
-    IBOutlet NSTextField *_newPassword;
-    IBOutlet NSTextField *_verifyPassword;
+    NSTextField *_originalPassword;
+    NSTextField *_newPassword;
+    NSTextField *_verifyPassword;
     NSTextField *_extOriginalPassword;
     NSTextField *_extNewPassword;
     NSTextField *_extVerifyPassword;
 }
 
-- (id)init;
-- (void)dealloc;
-- (void)loadOurNib;
-- (IBAction)showPasswordAssistantPanel:(id)fp8;
-- (void)baseWindowWillClose:(id)fp8;
-- (void)windowDidEndSheet:(id)fp8;
-- (void)ourPanelWillClose:(id)fp8;
+- (void)setVerifyPasswordField:(id)arg1;
+- (id)newPasswordField;
+- (void)setNewPasswordField:(id)arg1;
+- (void)setOriginalPasswordField:(id)arg1;
+- (void)setBaseWindow:(id)arg1;
 - (id)baseWindow;
-- (void)setBaseWindow:(id)fp8;
-- (void)setOriginalPasswordField:(id)fp8;
-- (void)setNewPasswordField:(id)fp8;
-- (void)setVerifyPasswordField:(id)fp8;
+- (void)ourPanelWillClose:(id)arg1;
+- (void)windowDidEndSheet:(id)arg1;
+- (void)baseWindowWillClose:(id)arg1;
+- (void)closePasswordAssistantPanel;
+- (void)showPasswordAssistantPanel:(id)sender;
+- (void)loadOurNib;
+- (void)dealloc;
+- (id)init;
 
 @end
 
+
+@interface SFPasswordAssistantInspectorController (Panel)
+- (NSPanel*)panel;
+@end
