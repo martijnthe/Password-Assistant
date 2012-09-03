@@ -19,7 +19,7 @@
 //	INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 //	PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 //	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-//	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+//	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWAREq
 //	OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 //	Tons of thanks to boredzo for http://www.cocoadev.com/index.pl?PasswordAssistant
@@ -34,11 +34,20 @@
     NSStatusItem *statusItem;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {    
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    
+    // Get icon from bundle and create image of the right size
+    
+    NSURL* iconURL = [[NSBundle mainBundle] URLForResource:@"Unlock-256" withExtension:@"icns"];
+    NSImage* image = [[NSImage alloc] initWithContentsOfURL:iconURL];
+    float statusBarThickness = [[NSStatusBar systemStatusBar] thickness];
+    [image setSize:NSMakeSize(statusBarThickness, statusBarThickness)];
+    
     // Init statusItem:
-    statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-    [statusItem setTitle:@"PA"];
-    [statusItem setToolTip:@"PA"];
+    
+    statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
+    [statusItem setImage: image];
+    [statusItem setToolTip:@"Password Assistant"];
     [statusItem setHighlightMode:YES];
     [statusItem setTarget:self];
     [statusItem setAction:@selector(showPasswordAssistantPanel:)];
@@ -50,10 +59,18 @@
     }
     
     pwAsst = [[SFPasswordAssistantInspectorController alloc] init];
+    
+    // Load the nib to force pwAsst to create its panel without showing the panel to the
+    // user.  Then hide the panel by setting its alpha to zero, before doing the normal
+    // password assistant startup.  This order of events is required to avoid flashing
+    // the panel on startup in its standard location in the lower-left.
+    
     [pwAsst loadOurNib];
     [[pwAsst panel] setAlphaValue:0];
     [pwAsst showPasswordAssistantPanel:sender];
+    
 
+    // Place the panel directly underneat the status bar icon.
     if (sender && [sender isKindOfClass:[NSView class]]) {
         NSPanel* panel = [pwAsst panel];
         NSRect frame = [panel convertRectFromScreen:[[sender window] convertRectToScreen:[sender frame]]];
@@ -61,6 +78,8 @@
         topLeft.y += frame.size.height;
         [panel setFrameTopLeftPoint:topLeft];
     }
+    
+    // Once the panel is set up in the right place, show it to the user.
     [[pwAsst panel] setAlphaValue:1];
     [[pwAsst panel] makeKeyAndOrderFront:sender];
 }
