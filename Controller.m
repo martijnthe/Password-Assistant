@@ -50,6 +50,8 @@
     }
     
     pwAsst = [[SFPasswordAssistantInspectorController alloc] init];
+    [pwAsst loadOurNib];
+    [[pwAsst panel] setAlphaValue:0];
     [pwAsst showPasswordAssistantPanel:sender];
 
     if (sender && [sender isKindOfClass:[NSView class]]) {
@@ -59,7 +61,7 @@
         topLeft.y += frame.size.height;
         [panel setFrameTopLeftPoint:topLeft];
     }
-    
+    [[pwAsst panel] setAlphaValue:1];
     [[pwAsst panel] makeKeyAndOrderFront:sender];
 }
 
